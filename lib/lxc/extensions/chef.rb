@@ -71,7 +71,53 @@ module LXC
       end
 
       def chef_apply_url(url)
-        ssh!(:command=>"curl -L #{url}|sudo chef-apply -s")
+        chef_apply(:url, url)
+      end
+
+      def chef_apply(type, data)
+        case type
+        when :url
+          ssh!(:command=>"curl -L #{url}|sudo chef-apply -s")
+        when :file
+          upload!(remote_path: '/tmp/recipe', local_path: data)
+          ssh!(:command=>"cat /tmp/recipe |sudo chef-apply -s")
+        when :string
+          ssh!(:command=>"echo #{data.dump}|sudo chef-apply -s")
+        end
+      end
+
+      def chef_recipe(name, &block)
+        node = chef_node
+        run_context = chef_run_context
+        recipe = ::Chef::Recipe.new(name,'test',run_context)
+        recipe.instance_eval(&block) if block_given?
+        recipe_text = ""
+        run_context.resource_collection.each do |resource|
+          text = resource.to_text
+          text.gsub!(/^\s+recipe_name\s+.*$/,'')
+          text.gsub!(/^\s+cookbook_name\s+.*$/,'')
+          text.gsub!(/^\s+backup\s+.*$/,'')
+          recipe_text <<  text
+          recipe_text << "\n"
+        end
+        # transfer json to container
+        t = Tempfile.new('resources')
+        t.write(recipe_text)
+        t.close
+        upload!(local_path:t.path, remote_path: '/tmp/recipe')
+        output = chef_apply(:file, t.path)
+        t.unlink
+        output
+      end
+
+      def chef_run_context
+        ::Chef::RunContext.new(chef_node, nil, nil)
+      end
+
+      def chef_node
+        node = ::Chef::Node.new
+        node.consume_external_attrs(nil, ohai)
+        node
       end
 
       def chef_client_run(options={})

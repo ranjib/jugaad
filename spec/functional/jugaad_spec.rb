@@ -1,6 +1,5 @@
 require 'spec_helper'
 require 'tempfile'
-require 'jugaad/lxc/extension'
 
 describe Jugaad do
   describe "lxc" do
@@ -73,7 +72,12 @@ describe Jugaad do
         container.chef_resource(resource: 'package[tcpdump]', action: :install)
         expect(container.ssh(command: 'which tcpdump').exitstatus).to eq(0)
       end
-      it "#chef_apply" do
+      it "#chef_recipe" do
+        container.chef_recipe "something funky" do
+          package "apache2"
+          package "lsof"
+        end
+        expect(container.ssh(command: 'lsof -i :80').exitstatus).to eq(9)
       end
     end
 
