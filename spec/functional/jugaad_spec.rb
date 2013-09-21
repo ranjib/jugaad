@@ -76,8 +76,11 @@ describe Jugaad do
         container.chef_recipe "something funky" do
           package "apache2"
           package "lsof"
+          service "apache2" do
+            action :start
+          end
         end
-        expect(container.ssh(command: 'lsof -i :80').exitstatus).to eq(9)
+        expect(container.ssh(command: 'sudo lsof -i :80').exitstatus).to eq(0)
       end
     end
 

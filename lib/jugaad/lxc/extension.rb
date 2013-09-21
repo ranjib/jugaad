@@ -1,24 +1,23 @@
-
 require 'net/ssh'
 require 'lxc'
-require 'net/scp'
 require 'lxc/container'
-require 'lxc/extensions/core'
-require 'lxc/extensions/ssh'
-require 'lxc/extensions/chef'
+require 'jugaad/lxc'
+require 'jugaad/lxc/extensions/core'
+require 'jugaad/lxc/extensions/ssh'
+require 'jugaad/lxc/extensions/chef'
 
 module LXC
   class Container
 
     # gives container.ipv4
-    include LXC::Extensions::Core
+    include Jugaad::LXC::Extensions::Core
 
     # gives container.ssh container.ssh! container.download!
-    include LXC::Extensions::Ssh
+    include Jugaad::LXC::Extensions::Ssh
 
     # gives container.chef_install container.chef_bootstrap
     #       container.
     #       
-    include LXC::Extensions::Chef
+    include Jugaad::LXC::Extensions::Chef
   end
 end
