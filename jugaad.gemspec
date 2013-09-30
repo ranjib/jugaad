@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "lxc-ruby"
+  spec.add_dependency "lxc-ruby", '>= 0.3.1'
   spec.add_dependency "chef", ">= 11.0.0"
   spec.add_dependency "berkshelf"
   spec.add_dependency "net-scp"
