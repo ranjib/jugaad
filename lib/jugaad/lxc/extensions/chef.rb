@@ -58,8 +58,8 @@ module Jugaad
             recipe=<<-EOF
 
               #{resource_type} "#{resource_name}" do
-                action :#{action.to_s}
                 #{attributes}
+                #{resource_action_to_s(action)}
               end
 
             EOF
@@ -81,7 +81,7 @@ module Jugaad
           begin
             case type
             when :url
-              ssh!(:command=>"curl -L #{url}|sudo chef-apply -s")
+              ssh!(:command=>"curl -L #{data}|sudo chef-apply -s")
             when :file
               upload!(remote_path: '/tmp/recipe.rb', local_path: data)
               ssh!(:command=>"sudo chef-apply /tmp/recipe.rb")
@@ -145,6 +145,16 @@ module Jugaad
           knife.config[:config_file] = config[:knife]
           knife.config[:run_list] = config[:run_list]
           knife.run
+        end
+
+        private
+
+        def resource_action_to_s(action=nil)
+          unless action.nil?
+                "action :#{action.to_s}"
+          else
+                ""
+          end
         end
       end
     end
