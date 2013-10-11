@@ -5,6 +5,7 @@ require 'jugaad/lxc'
 require 'jugaad/lxc/extensions/core'
 require 'jugaad/lxc/extensions/ssh'
 require 'jugaad/lxc/extensions/chef'
+require 'jugaad/lxc/extensions/etcd'
 
 module LXC
   class Container
@@ -19,5 +20,8 @@ module LXC
     #       container.
     #       
     include Jugaad::LXC::Extensions::Chef
+
+    # Etcd bindings
+    include Jugaad::LXC::Extensions::Etcd
   end
 end

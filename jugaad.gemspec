@@ -23,6 +23,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "berkshelf"
   spec.add_dependency "net-scp"
   spec.add_dependency "uuid"
+  spec.add_dependency "etcd"
 
   spec.add_development_dependency "bundler", "~> 1.3"
   spec.add_development_dependency "rake"
